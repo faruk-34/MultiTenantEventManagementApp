@@ -12,7 +12,7 @@ namespace Domain.Entities
         public string Name { get; set; } = null!;
         public string Identifier { get; set; } = null!;
 
-        public ICollection<User> Users { get; set; } = new List<User>();
+        public ICollection<Users> Users { get; set; } = new List<Users>();
         public ICollection<Event> Events { get; set; } = new List<Event>();
     }
 }

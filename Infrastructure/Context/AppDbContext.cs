@@ -14,7 +14,7 @@ namespace Infrastructure.Context
             : base(options) { }
 
         
-        public DbSet<User> Users => Set<User>();
+        public DbSet<Users> Users => Set<Users>();
         public DbSet<Tenant> Tenants => Set<Tenant>();
         public DbSet<Event> Events => Set<Event>();
         public DbSet<Registration> Registrations => Set<Registration>();

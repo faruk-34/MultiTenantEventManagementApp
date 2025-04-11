@@ -1,13 +1,13 @@
-﻿
+﻿using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Application.Models.SubResponseModel
 {
-    public class Event : BaseEntity
+    public class EventVM
     {
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
@@ -17,6 +17,6 @@ namespace Domain.Entities
         public string Status { get; set; } = "Scheduled";
         public int TenantId { get; set; }
         public Tenant Tenant { get; set; } = null!;
-        public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+      //  public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
     }
 }
