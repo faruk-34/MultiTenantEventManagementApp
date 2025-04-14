@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Tenant : BaseEntity
+    public class Tenant : BaseEntity, ISoftDeletable
     {
-        public string Name { get; set; } = null!;
-        public string Identifier { get; set; } = null!;
-
-        public ICollection<Users> Users { get; set; } = new List<Users>();
-        public ICollection<Event> Events { get; set; } = new List<Event>();
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public List<Users> Users { get; set; }  
+        public List<Event> Events { get; set; }  
     }
 }

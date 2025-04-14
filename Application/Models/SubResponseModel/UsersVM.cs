@@ -15,8 +15,7 @@ namespace Application.Models.SubResponseModel
         public string UserName { get; set; }
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public string TenantName { get; set; }
-        public string Message { get; set; }
+ 
         public string Token { get; set; }
     }
 }

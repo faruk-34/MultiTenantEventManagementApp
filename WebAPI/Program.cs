@@ -1,9 +1,13 @@
 using Application.Interfaces;
 using Application.Mapping;
 using Application.Services;
+using Domain.Interfaces;
+using Infrastructure;
 using Infrastructure.Authentication;
 using Infrastructure.Context;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +20,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+builder.Services.AddScoped<ITenantService, TenantService>();
+builder.Services.AddScoped<ITenantRepository, TenantRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+builder.Services.AddScoped<WorkContext>();
+
 var app = builder.Build();
 
  if (app.Environment.IsDevelopment())
@@ -27,6 +44,8 @@ var app = builder.Build();
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<JwtUserResolverMiddleware>();
+
 
 app.UseAuthorization();
 

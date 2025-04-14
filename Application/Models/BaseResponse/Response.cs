@@ -10,7 +10,6 @@ namespace Application.Models.BaseResponse
     public class Response<T> : BaseResponse
     {
         public T? Data { get; set; }
-        public List<T> DataList { get; set; } = new();
         public int TotalRows { get; set; }
     }
     public class BaseResponse
@@ -18,7 +17,6 @@ namespace Application.Models.BaseResponse
         public bool IsSuccess { get; set; } = true;
         public string MessageTitle { get; set; }
         public string ErrorMessage { get; set; }
-        public int StatusCode { get; set; } = (int)HttpStatusCode.OK;
-        public List<string> WarningMessages { get; set; } = new();
+   
     }
 }

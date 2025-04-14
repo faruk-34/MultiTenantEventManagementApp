@@ -130,11 +130,11 @@ namespace Application.Services
                     result.ErrorMessage = "Etkinlik bulunamadı.";
                     return result;
                 }
-
-                await _eventRepository.Delete(eventExist.Id,cancellationToken);
-
+           
+                eventExist.IsDeleted = true;
+                await _eventRepository.Update(eventExist, cancellationToken);
                 result.IsSuccess = true;
-                result.Data = true;
+                result.Data = true;              
                 result.MessageTitle = "Etkinlik başarıyla silindi.";
             }
             catch (Exception ex)

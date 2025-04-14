@@ -7,16 +7,12 @@ using System.Threading.Tasks;
 
 namespace Application.Models.SubRequestModel
 {
-    public class RequestRegistration
+    public class RequestUserRole
     {
         public int Id { get; set; }
-        public int EventId { get; set; }
-        public Event Event { get; set; } = null!;
         public int UserId { get; set; }
-        public Users User { get; set; } = null!;
-        public string Status { get; set; } = "Pending";
+        public Users User { get; set; }
+        public int RoleId { get; set; }
+        public Role Role { get; set; }
     }
-
-  
-
 }

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Users : BaseEntity
+    public class Users : BaseEntity, IMultiTenant,  ISoftDeletable
     {
-        public string Firstname { get; set; } = null!;
-        public string LastName { get; set; }
-        public string UserName { get; set; }
-        public string Email { get; set; } = null!;
-        public string Password { get; set; } = null!;
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string PasswordHash { get; set; }
         public int TenantId { get; set; }
+        public Tenant Tenant { get; set; }
+        public ICollection<UserRole> UserRoles { get; set; }
 
     }
 }
