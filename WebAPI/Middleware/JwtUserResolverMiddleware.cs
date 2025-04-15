@@ -1,5 +1,4 @@
-﻿using Application.Models;
-using Infrastructure;
+﻿using Infrastructure;
 using System.Security.Claims;
 
 namespace WebAPI.Middleware

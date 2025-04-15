@@ -1,9 +1,4 @@
 ﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Models.SubRequestModel
 {
@@ -15,9 +10,9 @@ namespace Application.Models.SubRequestModel
         public DateTime StartDateTime { get; set; }
         public string Location { get; set; } = null!;
         public int Capacity { get; set; }
-        public string Status { get; set; } = "Scheduled";
+        public int Status { get; set; }  
         public int TenantId { get; set; }
-        public Tenant Tenant { get; set; } = null!;
-        public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+      //  public Tenant Tenant { get; set; } = null!;
+      //  public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
     }
 }

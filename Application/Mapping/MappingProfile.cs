@@ -17,6 +17,18 @@ namespace Application.Mapping
 
             CreateMap<Users, UsersVM>().ReverseMap();
             CreateMap<Users, RequestUsers>().ReverseMap();
+
+            CreateMap<Tenant, TenantVM>().ReverseMap();
+            CreateMap<Tenant, RequestTenant>().ReverseMap();
+
+            CreateMap<Registration, RegistrationVM>().ReverseMap();
+            CreateMap<Registration, RequestRegistration>().ReverseMap();
+
+            CreateMap<Role, RoleVM>().ReverseMap();
+            CreateMap<Role, RequestRole>().ReverseMap();
+
+            CreateMap<UserRole, UserRoleVM>().ReverseMap();
+            CreateMap<UserRole, RequestUserRole>().ReverseMap();
         }
     }
 }

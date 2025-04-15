@@ -2,7 +2,7 @@
 using Application.Models.BaseResponse;
 using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
-using Domain.Entities;
+using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,23 +26,23 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<Response<RegistrationVM>> Register(int eventId,RequestRegistration request, CancellationToken cancellationToken)
+        public async Task<Response<RegistrationVM>> Register(int eventId, RequestRegistration request, CancellationToken cancellationToken)
         {
-            return await _registrationService.Register(eventId,request, cancellationToken);
+            return await _registrationService.Register(eventId, request, cancellationToken);
         }
 
         [HttpPut("{id}")]
-        public async Task<Response<RegistrationVM>> UpdateStatus(int eventId, int id,     
-                                                                        ///  RequestUpdateStatus request
+        public async Task<Response<RegistrationVM>> UpdateStatus(int eventId, int id,
+                                                                          RegistrationStatusEnum request,
                                                                         CancellationToken cancellationToken)
         {
-            return await _registrationService.UpdateStatusAsync(eventId, id,   cancellationToken);
+            return await _registrationService.UpdateStatus(eventId, id, request, cancellationToken);
         }
 
         [HttpDelete("{id}")]
-        public async Task<Response<bool>> Cancel(int eventId, int id,CancellationToken cancellationToken)
+        public async Task<Response<bool>> Cancel(int eventId, int id, CancellationToken cancellationToken)
         {
-            return await _registrationService.CancelAsync(eventId, id,cancellationToken);
+            return await _registrationService.CancelAsync(eventId, id, cancellationToken);
         }
     }
 }

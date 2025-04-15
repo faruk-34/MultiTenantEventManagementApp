@@ -4,6 +4,7 @@ using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -94,8 +95,8 @@ namespace Application.Services
             return result;
         }
 
-        public async Task<Response<RegistrationVM>> UpdateStatusAsync(int eventId, int registrationId,
-                                                                                // RequestUpdateStatus request, 
+        public async Task<Response<RegistrationVM>> UpdateStatus(int eventId, int registrationId,
+                                                                                  RegistrationStatusEnum request, 
                                                                                 CancellationToken cancellationToken)
         {
             var result = new Response<RegistrationVM>();
@@ -110,7 +111,7 @@ namespace Application.Services
                     return result;
                 }
 
-               // registration.Status = request.Status;
+                registration.Status = request;
                 await _registrationRepository.Update(registration, cancellationToken);
 
                 result.IsSuccess = true;

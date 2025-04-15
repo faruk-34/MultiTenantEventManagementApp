@@ -5,8 +5,10 @@ using Domain.Interfaces;
 using Infrastructure;
 using Infrastructure.Authentication;
 using Infrastructure.Context;
+using Infrastructure.Redis;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using WebAPI;
 using WebAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +36,8 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<WorkContext>();
+builder.Services.AddSingleton<IRedisService, RedisService>();
+
 
 var app = builder.Build();
 
@@ -45,8 +49,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseMiddleware<JwtUserResolverMiddleware>();
-
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

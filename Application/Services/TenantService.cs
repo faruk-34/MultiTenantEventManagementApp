@@ -62,7 +62,7 @@ namespace Application.Services
 
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<TenantVM>(tenant);
-                result.MessageTitle = "Mevcut tenant bilgisi getirildi.";
+       
             }
             catch (Exception ex)
             {

@@ -40,7 +40,7 @@ namespace WebAPI.Controllers
             return response;
         }
 
-        [HttpPut("{id}")]
+        [HttpPut()]
         public async Task<Response<EventVM>> Update( RequestEvent request,CancellationToken cancellationToken)
         {
             var response = await _eventService.Update( request, cancellationToken);

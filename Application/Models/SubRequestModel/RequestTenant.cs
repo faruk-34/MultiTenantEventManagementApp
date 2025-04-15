@@ -10,7 +10,7 @@ namespace Application.Models.SubRequestModel
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public string Identifier { get; set; } = null!;
+        public string Address { get; set; }
 
         //public ICollection<User> Users { get; set; } = new List<User>();
         //public ICollection<Event> Events { get; set; } = new List<Event>();

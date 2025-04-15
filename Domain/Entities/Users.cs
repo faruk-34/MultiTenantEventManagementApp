@@ -1,13 +1,6 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
-    public class Users : BaseEntity, IMultiTenant,  ISoftDeletable
+    public class Users : BaseEntity,  ISoftDeletable
     {
         public string Username { get; set; }
         public string Email { get; set; }

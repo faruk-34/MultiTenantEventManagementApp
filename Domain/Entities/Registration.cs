@@ -1,4 +1,5 @@
 ﻿
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace Domain.Entities
         public Event Event { get; set; }  
         public int UserId { get; set; }
         public Users User { get; set; }  
-      //  public RegistrationStatus Status { get; set; } // Enum: Approved, Canceled, Waitlisted
+         public RegistrationStatusEnum Status { get; set; } // Enum: Approved, Canceled, Waitlisted
     }
 }

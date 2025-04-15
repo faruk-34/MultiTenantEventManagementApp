@@ -6,6 +6,7 @@ using Application.Validator;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using FluentValidation;
 using FluentValidation.Results;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -84,12 +85,23 @@ namespace Application.Services
             }
             return result;
         }
-        public async Task<Response<UsersVM>> Login(RequestUsers request, CancellationToken cancellationToken)
+        public async Task<Response<LoginVM>> Login(RequestLogin request, CancellationToken cancellationToken)
         {
-            var result = new Response<UsersVM>();
+            var result = new Response<LoginVM>();
 
-            try
-            {
+            //try
+            //{
+
+                LoginRequestValidator validator = new LoginRequestValidator(); // Fluent Validation
+                ValidationResult validationResult = validator.Validate(request);
+
+                if (!validationResult.IsValid)
+                {
+                    result.IsSuccess = false;
+                    result.ErrorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
+                    return result;
+                }
+
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
                 if (user == null)
                 {
@@ -97,7 +109,7 @@ namespace Application.Services
                     result.ErrorMessage = "Kullanıcı bulunamadı!";
                     return result;
                 }
-
+                
 
                 // Şifre doğrulama
                 bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
@@ -108,22 +120,27 @@ namespace Application.Services
                     return result;
                 }
 
-                var userVm = _mapper.Map<UsersVM>(user);
-                userVm.Token = _jwtTokenGenerator.GenerateToken(user);
+                // Token üretimi
+                var token = _jwtTokenGenerator.GenerateToken(user);
 
+                var loginVm = new LoginVM
+                {
+                    Token = token,
+                };
+
+                result.Data = loginVm;
                 result.IsSuccess = true;
-                result.MessageTitle = "Kullanıcı girişi başarılı!";
-                result.Data = userVm;
+                result.MessageTitle = "Kullanıcı girişi başarılı!" ;
 
                 return result;
             }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-                return result;
-            }
+            //catch (Exception ex)
+            //{
+            //    result.IsSuccess = false;
+            //    result.ErrorMessage = ex.Message;
+            //    return result;
+            //}
         }
 
     }
-}
+ 

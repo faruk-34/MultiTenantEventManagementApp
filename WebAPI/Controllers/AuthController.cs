@@ -22,6 +22,6 @@ namespace WebAPI.Controllers
 
 
         [HttpPost]
-        public async Task<Response<UsersVM>> Login(RequestUsers request, CancellationToken cancellationToken) =>  await _authService.Login(request, cancellationToken) ;
+        public async Task<Response<LoginVM>> Login(RequestLogin request, CancellationToken cancellationToken) =>  await _authService.Login(request, cancellationToken) ;
     }
 }
