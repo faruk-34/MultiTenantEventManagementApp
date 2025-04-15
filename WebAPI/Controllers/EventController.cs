@@ -2,15 +2,18 @@
 using Application.Models.BaseResponse;
 using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
+using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("api/[controller]/[action]")]
     [ApiController]
- 
-     public class EventController : ControllerBase
+
+    public class EventController : ControllerBase
     {
         private readonly IEventService _eventService;
 
@@ -19,11 +22,13 @@ namespace WebAPI.Controllers
             _eventService = eventService;
         }
 
-        [HttpGet]
-        public async Task<Response<List<EventVM>>> GetAll(CancellationToken cancellationToken)
+
+        [HttpGet()]
+        public IQueryable<Event> GetAllFilteredEvents([FromQuery] EventFilterVM filter, CancellationToken cancellationToken)
         {
-            var response = await _eventService.GetAll(cancellationToken);
-            return response;
+            var query = _eventService.GetAllFilter(filter, cancellationToken);
+
+            return (IQueryable<Event>)query; 
         }
 
         [HttpGet("{id}")]

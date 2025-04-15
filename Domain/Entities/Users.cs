@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities
 {
-    public class Users : BaseEntity,  ISoftDeletable
+    public class Users : BaseEntity ,  ISoftDeletable
     {
         public string Username { get; set; }
         public string Email { get; set; }

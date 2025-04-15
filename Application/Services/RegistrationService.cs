@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Models.BaseResponse;
+using Application.Models.Enum;
 using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
 using AutoMapper;
@@ -30,40 +31,39 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Response<RegistrationVM>> Get(int eventId, CancellationToken cancellationToken)
+        public async Task<Response<List<RegistrationVM>>> Get(int eventId, CancellationToken cancellationToken)
         {
-            var result = new Response<RegistrationVM>();
+            var eventExist = await _eventRepository.Get(eventId, cancellationToken);
 
-            try
+            if (eventExist == null)
             {
-                var eventExist = await _eventRepository.Get(eventId, cancellationToken);
-                if (eventExist == null)
+                return new Response<List<RegistrationVM>>
                 {
-                    result.IsSuccess = false;
-                    result.ErrorMessage = "Etkinlik bulunamadı.";
-                    return result;
-                }
-
-                var registrations = await _registrationRepository.GetByEventIdAsync(eventId, cancellationToken);
-                result.IsSuccess = true;
-                result.Data = _mapper.Map<RegistrationVM>(registrations);
+                    IsSuccess = false,
+                    ErrorMessage = "Etkinlik bulunamadı."
+                };
             }
-            catch (Exception ex)
+
+            var registrations = await _registrationRepository.GetByEventIdAsync(eventId, cancellationToken);
+
+            // List<Registration> -> List<RegistrationVM> dönüşümü
+            var registrationVMs = _mapper.Map<List<RegistrationVM>>(registrations);
+
+            return new Response<List<RegistrationVM>>
             {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
-
-            return result;
+                IsSuccess = true,
+                Data = registrationVMs
+            };
         }
 
-        public async Task<Response<RegistrationVM>> Register(int eventId, RequestRegistration request, CancellationToken cancellationToken)
+
+        public async Task<Response<RegistrationVM>> Register(RequestRegistration request, CancellationToken cancellationToken)
         {
             var result = new Response<RegistrationVM>();
 
             try
             {
-                var eventExist = await _eventRepository.Get(eventId, cancellationToken);
+                var eventExist = await _eventRepository.Get(request.EventId, cancellationToken);
                 if (eventExist == null)
                 {
                     result.IsSuccess = false;
@@ -71,7 +71,6 @@ namespace Application.Services
                     return result;
                 }
 
-                // Check if the event is full
                 if (eventExist.Capacity <= eventExist.Registrations.Count)
                 {
                     result.IsSuccess = false;
@@ -80,8 +79,7 @@ namespace Application.Services
                 }
 
                 var registration = _mapper.Map<Registration>(request);
-                registration.EventId = eventId;
-                await _registrationRepository.Insert(registration, cancellationToken);
+                 await _registrationRepository.Insert(registration, cancellationToken);
 
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<RegistrationVM>(registration);
@@ -94,24 +92,22 @@ namespace Application.Services
             }
             return result;
         }
-
-        public async Task<Response<RegistrationVM>> UpdateStatus(int eventId, int registrationId,
-                                                                                  RegistrationStatusEnum request, 
-                                                                                CancellationToken cancellationToken)
+ 
+        public async Task<Response<RegistrationVM>> UpdateStatus(RequestRegistration request, CancellationToken cancellationToken)
         {
             var result = new Response<RegistrationVM>();
 
             try
             {
-                var registration = await _registrationRepository.Get(eventId,registrationId, cancellationToken);
-                if (registration == null || registration.EventId != eventId)
+                var registration = await _registrationRepository.Get(request.EventId,request.Id, cancellationToken);
+                if (registration == null || registration.EventId != request.EventId)
                 {
                     result.IsSuccess = false;
                     result.ErrorMessage = "Kayıt bulunamadı.";
                     return result;
                 }
 
-                registration.Status = request;
+                registration.Status = request.Status;
                 await _registrationRepository.Update(registration, cancellationToken);
 
                 result.IsSuccess = true;
@@ -126,22 +122,22 @@ namespace Application.Services
 
             return result;
         }
-
-        public async Task<Response<bool>> CancelAsync(int eventId, int registrationId, CancellationToken cancellation)
+        public async Task<Response<bool>> CancelAsync(RequestRegistration request, CancellationToken cancellation)
         {
             var result = new Response<bool>();
 
             try
             {
-                var registration = await _registrationRepository.Get(eventId,registrationId, cancellation);
-                if (registration == null || registration.EventId != eventId)
+                var registration = await _registrationRepository.Get(request.EventId,request.Id, cancellation);
+                if (registration == null || registration.EventId != request.EventId)
                 {
                     result.IsSuccess = false;
                     result.ErrorMessage = "Kayıt bulunamadı.";
                     return result;
                 }
 
-                await _registrationRepository.Delete(eventId, registrationId, cancellation);
+                registration.Status = RegistrationStatusEnum.Canceled;
+                await _registrationRepository.Update(registration,cancellation);
                 result.IsSuccess = true;
                 result.Data = true;
                 result.MessageTitle = "Kayıt iptal edildi.";

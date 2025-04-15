@@ -1,5 +1,6 @@
 ﻿
 using Domain.Entities;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Event : BaseEntity,IMultiTenant,ISoftDeletable
+    public class Event : BaseEntity,ISoftDeletable
     {
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DateTime { get; set; }
         public string Location { get; set; }
         public int Capacity { get; set; }
-      // public EventStatus Status { get; set; } // Enum for event status: Pending, Active, Completed
+        public EventStatusEnum Status { get; set; }  // Pending, Active, Completed
         public int TenantId { get; set; }
-        public Tenant Tenant { get; set; } // Navigation property
-        public List<Registration> Registrations { get; set; } // Navigation property for event registrations
+        public Tenant Tenant { get; set; } 
+        public List<Registration> Registrations { get; set; } 
     }
 }
  

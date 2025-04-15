@@ -20,7 +20,6 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<Response<UsersVM>> Register(RequestUsers request,CancellationToken cancellationToken) =>  await _authService.Register(request, cancellationToken) ;
 
-
         [HttpPost]
         public async Task<Response<LoginVM>> Login(RequestLogin request, CancellationToken cancellationToken) =>  await _authService.Login(request, cancellationToken) ;
     }

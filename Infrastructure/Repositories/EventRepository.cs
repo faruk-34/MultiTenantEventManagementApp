@@ -18,28 +18,14 @@ namespace Infrastructure.Repositories
         {
             var query = _context.Events.AsQueryable();
 
-            //if (!string.IsNullOrEmpty(filter.Title))
-            //{
-            //    query = query.Where(e => e.Title.Contains(filter.Title));
-            //}
-
-            //if (filter.StartDate.HasValue)
-            //{
-            //    query = query.Where(e => e.StartDate >= filter.StartDate.Value);
-            //}
-
-            //if (filter.EndDate.HasValue)
-            //{
-            //    query = query.Where(e => e.EndDate <= filter.EndDate.Value);
-            //}
-
-
             return await query.ToListAsync(cancellationToken);
         }
 
         public async Task<Event> Get(int id, CancellationToken cancellationToken)
         {
-            return await _context.Events.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+            return await _context.Events
+     .Include(e => e.Registrations)
+     .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
         }
 

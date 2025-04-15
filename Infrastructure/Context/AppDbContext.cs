@@ -1,20 +1,22 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Context
 {
     public class AppDbContext : DbContext
     {
-
+        private readonly IConfiguration _configuration;
         public WorkContext _workContext { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options,
-            WorkContext workContext
+            WorkContext workContext, IConfiguration configuration
 
             )
             : base(options)
         {
             _workContext = workContext;
+            _configuration = configuration;
         }
 
         // DbSet tanımlamaları

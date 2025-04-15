@@ -4,7 +4,9 @@ using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces;
+using Infrastructure.Context;
 using Infrastructure.Redis;
 
 namespace Application.Services
@@ -14,12 +16,14 @@ namespace Application.Services
         private readonly IEventRepository _eventRepository;
         private readonly IMapper _mapper;
         private readonly IRedisService _redis;
+        private readonly AppDbContext _context;
 
-        public EventService(IEventRepository eventRepository, IMapper mapper, IRedisService redisService)
+        public EventService(IEventRepository eventRepository, IMapper mapper, IRedisService redis,AppDbContext context)
         {
             _eventRepository = eventRepository;
             _mapper = mapper;
-            _redis = redisService;
+            _redis = redis;
+            _context = context;
         }
 
         #region Etkinlik Detay Catchcleme (Redis)
@@ -47,19 +51,20 @@ namespace Application.Services
                 Capacity = evt.Capacity,
                 //  Status = evt.Status,
                 TenantId = evt.TenantId,
-                Tenant = evt.Tenant
             };
 
             // 4. Redis'e cache'le (10 dakika süreyle)
             await _redis.SetAsync(cacheKey, dto, TimeSpan.FromMinutes(10));
 
-            // 5. Sonuç olarak dto’yu dön
+
             return dto;
         }
         #endregion
 
+
         public async Task<Response<List<EventVM>>> GetAll(CancellationToken cancellationToken)
         {
+           
             var result = new Response<List<EventVM>>();
 
             try
@@ -75,6 +80,33 @@ namespace Application.Services
             }
 
             return result;
+        }
+ 
+        public IQueryable<Event> GetAllFilter(EventFilterVM filter, CancellationToken cancellationToken)
+        {
+            var query = _context.Events.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter.Title))
+            {
+                query = query.Where(e => e.Title.Contains(filter.Title));
+            }
+
+            if (filter.StartDate.HasValue)
+            {
+                query = query.Where(e => e.DateTime >= filter.StartDate.Value);
+            }
+
+            if (filter.EndDate.HasValue)
+            {
+                query = query.Where(e => e.DateTime <= filter.EndDate.Value);
+            }
+
+            if (filter.Status.HasValue)
+            {
+                query = query.Where(e => e.Status == (EventStatusEnum)filter.Status.Value);
+            }
+
+            return query;  
         }
 
         public async Task<Response<EventVM>> Get(int id, CancellationToken cancellationToken)
@@ -144,10 +176,10 @@ namespace Application.Services
                 await _eventRepository.Update(eventExist, cancellationToken);
 
                 ///cache boşalt
-                var cacheKey = $"event:{request.Id}";
-                var cached = await _redis.GetAsync<EventVM>(cacheKey);
-                if (cached != null)
-                    await _redis.RemoveAsync(cacheKey);
+                //var cacheKey = $"event:{request.Id}";
+                //var cached = await _redis.GetAsync<EventVM>(cacheKey);
+                //if (cached != null)
+                //    await _redis.RemoveAsync(cacheKey);
 
 
                 result.IsSuccess = true;

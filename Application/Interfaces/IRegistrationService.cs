@@ -7,11 +7,9 @@ namespace Application.Interfaces
 {
     public interface   IRegistrationService
     {
-        Task<Response<RegistrationVM>> Get(int eventId,CancellationToken cancellation);
-        Task<Response<RegistrationVM>> Register(int eventId, RequestRegistration request,CancellationToken cancellationToken);
-        Task<Response<RegistrationVM>> UpdateStatus(int eventId, int registrationId,
-                                                                                  RegistrationStatusEnum request,
-                                                                                CancellationToken cancellationToken);
-        Task<Response<bool>> CancelAsync(int eventId, int registrationId, CancellationToken cancellationToken);
+        Task<Response<List<RegistrationVM>>> Get(int eventId,CancellationToken cancellation);
+        Task<Response<RegistrationVM>> Register( RequestRegistration request,CancellationToken cancellationToken);
+        Task<Response<RegistrationVM>> UpdateStatus(RequestRegistration request,   CancellationToken cancellationToken);
+        Task<Response<bool>> CancelAsync(RequestRegistration request, CancellationToken cancellationToken);
     }
 }

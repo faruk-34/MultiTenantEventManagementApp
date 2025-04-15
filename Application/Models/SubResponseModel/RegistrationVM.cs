@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,6 @@ namespace Application.Models.SubResponseModel
         public Event Event { get; set; } = null!;
         public int UserId { get; set; }
         public Users User { get; set; } = null!;
-        public string Status { get; set; } = "Pending";
+        public RegistrationStatusEnum Status { get; set; } 
     }
 }

@@ -21,8 +21,14 @@ namespace Application.Mapping
             CreateMap<Tenant, TenantVM>().ReverseMap();
             CreateMap<Tenant, RequestTenant>().ReverseMap();
 
+            CreateMap<Event, EventVM>().ReverseMap();
+            CreateMap<Event, RequestEvent>().ReverseMap();
+
             CreateMap<Registration, RegistrationVM>().ReverseMap();
             CreateMap<Registration, RequestRegistration>().ReverseMap();
+
+            CreateMap<List<Registration>, RegistrationVM>().ReverseMap();
+            CreateMap<List<Registration>, RequestRegistration>().ReverseMap();
 
             CreateMap<Role, RoleVM>().ReverseMap();
             CreateMap<Role, RequestRole>().ReverseMap();
