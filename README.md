@@ -33,7 +33,7 @@ Veri erişimi ve dış servis entegrasyonlarının yapıldığı katmandır.
 API uç noktalarının tanımlandığı katmandır.
 - `Controllers`: REST API controller’ları
 - `Middleware`: Global hata yakalayıcı vb. özel middleware bileşenleri
-- `GlobalExceptionHandler.cs`: SeriLog eklendi.Hataların Consolda gösterilmesi ve loglanması. 
+- `GlobalExceptionHandler.cs`: SeriLog ile alınan  hataların consolda gösterilmesi ve loglanması. 
 - `Program.cs`: Uygulama başlatma noktası
 - `appsettings.json`: Uygulama konfigürasyonu
 
