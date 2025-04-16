@@ -11,11 +11,21 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 using WebAPI;
 using WebAPI.Middleware;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // JSON ayarlarý ve controller'lar
 builder.Services.AddControllers()
@@ -108,6 +118,7 @@ builder.Services.AddScoped<IWorkContext, WorkContext>();
 builder.Services.AddScoped<IRedisService, RedisService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 
+
 var app = builder.Build();
 
 // Middleware'ler ve uygulama pipeline'ý
@@ -125,5 +136,6 @@ app.UseAuthorization();
 app.UseMiddleware<JwtUserResolverMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 
+ 
 app.MapControllers();
 app.Run();

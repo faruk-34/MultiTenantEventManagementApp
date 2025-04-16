@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [Authorize]
+     
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class AuthController : ControllerBase
