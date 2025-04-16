@@ -5,8 +5,6 @@ using Application.Models.SubResponseModel;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Repositories;
-using System.Threading;
 
 namespace Application.Services
 {
@@ -23,23 +21,14 @@ namespace Application.Services
 
         public async Task<Response<UserRoleVM>> InsertUserRole(RequestUserRole request, CancellationToken cancellationToken)
         {
-
             var result = new Response<UserRoleVM>();
-            try
-            {
-                var userRole = _mapper.Map<UserRole>(request);
-                await _userRoleRepository.InsertUserRole(userRole, cancellationToken);
 
-                result.IsSuccess = true;
-                result.Data = _mapper.Map<UserRoleVM>(userRole);
+            var userRole = _mapper.Map<UserRole>(request);
+            await _userRoleRepository.InsertUserRole(userRole, cancellationToken);
 
-            }
-            catch (Exception ex)
-            {
+            result.IsSuccess = true;
+            result.Data = _mapper.Map<UserRoleVM>(userRole);
 
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
             return result;
         }
 
@@ -55,12 +44,8 @@ namespace Application.Services
 
         public async Task<Response<UserRoleVM>> UpdateUserRole(RequestUserRole request, CancellationToken cancellationToken)
         {
- 
-
             var result = new Response<UserRoleVM>();
 
-            try
-            {
                 var userRoleExist = await _userRoleRepository.GetUserRole(request.Id, cancellationToken);
                 if (userRoleExist == null)
                 {
@@ -74,23 +59,16 @@ namespace Application.Services
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<UserRoleVM>(userRoleExist);
                 result.MessageTitle = "UserRole başarıyla güncellendi.";
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
+
 
             return result;
         }
 
         public async Task<Response<bool>> DeleteUserRole(RequestUserRole request, CancellationToken cancellationToken)
         {
-
             var result = new Response<bool>();
 
-            try
-            {
+        
                 var userRoleExist = await _userRoleRepository.GetUserRole(request.Id, cancellationToken);
                 if (userRoleExist == null)
                 {
@@ -98,20 +76,12 @@ namespace Application.Services
                     result.ErrorMessage = "Kayıt bulunamadı.";
                     return result;
                 }
-
  
-
                 userRoleExist.IsDeleted = true;
                 await _userRoleRepository.UpdateUserRole(userRoleExist, cancellationToken);
                 result.IsSuccess = true;
                 result.Data = true;
                 result.MessageTitle = "Kayıt başarıyla silindi.";
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
 
             return result;
         }

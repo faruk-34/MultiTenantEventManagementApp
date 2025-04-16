@@ -5,7 +5,6 @@ using Application.Models.SubResponseModel;
 using Application.Validator;
 using AutoMapper;
 using Domain.Entities;
-using Domain.Interfaces;
 using FluentValidation.Results;
 using Infrastructure;
 using Infrastructure.Context;
@@ -16,18 +15,16 @@ namespace Application.Services
     public class AuthService : IAuthService
     {
         private readonly AppDbContext _context;
-        private readonly IUsersRepository _usersRepository;
-        private readonly IMapper _mapper;
+         private readonly IMapper _mapper;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IWorkContext _workContext;
 
 
-        public AuthService(IUsersRepository usersRepository, IMapper mapper,
+        public AuthService(IMapper mapper,
              AppDbContext context,
              IJwtTokenGenerator jwtTokenGenerator, IWorkContext workContext)
         {
-            _usersRepository = usersRepository;
-            _mapper = mapper;
+             _mapper = mapper;
             _jwtTokenGenerator = jwtTokenGenerator;
             _context = context;
             _workContext = workContext;
@@ -37,8 +34,7 @@ namespace Application.Services
         {
             var result = new Response<UsersVM>();
 
-            try
-            {
+            
                 RegisterRequestValidator validator = new RegisterRequestValidator(); // Fluent Validation
                 ValidationResult validationResult = validator.Validate(request);
 
@@ -70,8 +66,7 @@ namespace Application.Services
                 request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
                 Users user = _mapper.Map<Users>(request);
-                user.TenantId = _workContext.TenantId;
-
+ 
                 if (string.IsNullOrEmpty(user.PasswordHash))
                     user.PasswordHash = request.Password;
 
@@ -80,13 +75,7 @@ namespace Application.Services
 
                 result.IsSuccess = true;
                 result.ErrorMessage = "Kullanıcı başarıyla kaydedildi!";
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-
-            }
+   
             return result;
         }
         public async Task<Response<LoginVM>> Login(RequestLogin request, CancellationToken cancellationToken)
@@ -135,7 +124,6 @@ namespace Application.Services
 
             return result;
         }
-
     }
 }
 

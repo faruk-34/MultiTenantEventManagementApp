@@ -11,7 +11,9 @@ namespace WebAPI.Middleware
             _next = next;
            
         }
- 
+
+        //  JWT ile gelen kullanıcı bilgilerinin uygulama genelinde kullanılabilmesi için bir context nesnesine (IWorkContext) aktarılmasını sağlar.
+        //  Böylece servislerde tekrar token çözümleme ihtiyacı olmadan IWorkContext üzerinden kullanıcı bilgilerine erişim sağlanabilir.
         public async Task InvokeAsync(HttpContext context, IWorkContext workContext)
         {
             if (context.User.Identity.IsAuthenticated)

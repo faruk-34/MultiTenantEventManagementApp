@@ -12,21 +12,16 @@ namespace Application.Services
         private readonly IUsersRepository _userRepository;
         private readonly IMapper _mapper;
 
-      
-
-        public UsersService(IUsersRepository userRepository, IMapper mapper )
+         public UsersService(IUsersRepository userRepository, IMapper mapper )
         {
             _userRepository = userRepository;
             _mapper = mapper;
           
         }
- 
         public async Task<Response<UsersVM>> Get(int id, CancellationToken cancellationToken)
         {
             var result = new Response<UsersVM>();
-
-            try
-            {
+ 
                 var user = await _userRepository.Get(id, cancellationToken);
 
                 if (user == null)
@@ -41,21 +36,12 @@ namespace Application.Services
                 result.Data = userVm;
  
                 return result;
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message; 
-                return result;
-            }
+ 
         }
-
         public async Task<Response<UsersVM>> Update(RequestUsers request, CancellationToken cancellationToken)
         {
             var result = new Response<UsersVM>();
-
-            try
-            {
+ 
                 var user = await _userRepository.Get(request.Id, cancellationToken);
 
                 if (user == null)
@@ -74,17 +60,8 @@ namespace Application.Services
                 result.Data = userVm;
                 result.MessageTitle = "Kullanıcı başarıyla güncellendi.";
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-                return result;
-            }
+                return result;             
         }
-
-
         public async Task<IEnumerable<UsersVM>> GetAllByTenantAsync(int tenantId, CancellationToken cancellationToken)
         {
             var users = await _userRepository.GetAllByTenantAsync(tenantId, cancellationToken);

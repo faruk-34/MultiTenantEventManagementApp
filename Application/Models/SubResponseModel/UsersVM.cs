@@ -1,11 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Models.SubResponseModel
+﻿namespace Application.Models.SubResponseModel
 {
     public class UsersVM
     {
@@ -16,6 +9,6 @@ namespace Application.Models.SubResponseModel
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public int TenantId { get; set; }
-        public string Token { get; set; }
+       
     }
 }

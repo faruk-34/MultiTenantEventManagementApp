@@ -66,22 +66,13 @@ namespace Application.Services
 
 
         public async Task<Response<List<EventVM>>> GetAll(CancellationToken cancellationToken)
-        {
-           
+        {           
             var result = new Response<List<EventVM>>();
-
-            try
-            {
+ 
                 var events = await _eventRepository.GetAll(cancellationToken);
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<List<EventVM>>(events);
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
-
+ 
             return result;
         }
  
@@ -148,9 +139,7 @@ namespace Application.Services
         public async Task<Response<EventVM>> Insert(RequestEvent request, CancellationToken cancellationToken)
         {
             var result = new Response<EventVM>();
-
-            try
-            {
+ 
                 var eventEntity = _mapper.Map<Event>(request);
                 eventEntity.TenantId=_workContext.TenantId;
                 await _eventRepository.Insert(eventEntity, cancellationToken);
@@ -158,22 +147,14 @@ namespace Application.Services
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<EventVM>(eventEntity);
                 result.MessageTitle = "Etkinlik başarıyla oluşturuldu.";
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
-
+ 
             return result;
         }
 
         public async Task<Response<EventVM>> Update(RequestEvent request, CancellationToken cancellationToken)
         {
             var result = new Response<EventVM>();
-
-            try
-            {
+ 
                 var eventExist = await _eventRepository.Get(request.Id, cancellationToken);
                 if (eventExist == null)
                 {
@@ -185,22 +166,17 @@ namespace Application.Services
                 _mapper.Map(request, eventExist);
                 await _eventRepository.Update(eventExist, cancellationToken);
 
-                ///cache boşalt
-                //var cacheKey = $"event:{request.Id}";
-                //var cached = await _redis.GetAsync<EventVM>(cacheKey);
-                //if (cached != null)
-                //    await _redis.RemoveAsync(cacheKey);
+            /// İlgili kayıt update edildiğinde Cachde eski hali kalmasın die Cache boşaltıroyuz.
+            /// 
+            var cacheKey = $"event:{request.Id}";
+                var cached = await _redis.GetAsync<EventVM>(cacheKey);
+                if (cached != null)
+                    await _redis.RemoveAsync(cacheKey);
 
 
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<EventVM>(eventExist);
-                result.MessageTitle = "Etkinlik başarıyla güncellendi.";
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
+                result.MessageTitle = "Etkinlik başarıyla güncellendi."; 
 
             return result;
         }
@@ -209,8 +185,6 @@ namespace Application.Services
         {
             var result = new Response<bool>();
 
-            try
-            {
                 var eventExist = await _eventRepository.Get(id, cancellationToken);
                 if (eventExist == null)
                 {
@@ -224,15 +198,8 @@ namespace Application.Services
                 result.IsSuccess = true;
                 result.Data = true;
                 result.MessageTitle = "Etkinlik başarıyla silindi.";
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
 
             return result;
         }
     }
-
 }

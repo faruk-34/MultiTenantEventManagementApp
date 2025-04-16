@@ -1,7 +1,6 @@
 ﻿using Application.Models.BaseResponse;
 using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
-using Domain.Enums;
 
 namespace Application.Interfaces
 {

@@ -22,30 +22,20 @@ namespace Application.Services
         public async Task<Response<TenantVM>> Insert(RequestTenant request,CancellationToken cancellationToken)
         {
             var result = new Response<TenantVM>();
-
-            try
-            {
+ 
                 var tenant = _mapper.Map<Tenant>(request);
                 await _tenantRepository.Insert(tenant, cancellationToken);
                 result.Data = _mapper.Map<TenantVM>(tenant);
                 result.IsSuccess = true;
                 result.MessageTitle = "Tenant başarıyla oluşturuldu.";
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
-
+ 
             return result;
         }
 
         public async Task<Response<TenantVM>> Get(int id, CancellationToken cancellationToken)
         {
             var result = new Response<TenantVM>();
-
-            try
-            {
+ 
                 var tenant = await _tenantRepository.Get(id,cancellationToken);
 
                 if (tenant == null)
@@ -57,13 +47,6 @@ namespace Application.Services
 
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<TenantVM>(tenant);
-       
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
 
             return result;
         }

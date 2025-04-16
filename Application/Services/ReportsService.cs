@@ -1,16 +1,8 @@
 ﻿using Application.Interfaces;
 using Application.Models.BaseResponse;
-using Application.Models.Enum;
 using Application.Models.SubResponseModel;
-using AutoMapper;
 using Domain.Enums;
 using Domain.Interfaces;
-using Microsoft.AspNetCore.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -18,13 +10,11 @@ namespace Application.Services
     {
         private readonly IEventRepository _eventRepository;
         private readonly IRegistrationRepository _registrationRepository;
-        private readonly IMapper _mapper;
 
-        public ReportService(IEventRepository eventRepository, IRegistrationRepository registrationRepository, IMapper mapper)
+        public ReportService(IEventRepository eventRepository, IRegistrationRepository registrationRepository)
         {
             _eventRepository = eventRepository;
             _registrationRepository = registrationRepository;
-            _mapper = mapper;
         }
 
         public async Task<Response<EventStatisticsModel>> GetEventStatistics(int eventId, CancellationToken cancellationToken)
@@ -46,13 +36,13 @@ namespace Application.Services
                 EventId = recEvent.Id,
                 EventTitle = recEvent.Title,
                 TotalRegistrations = registrations.Count,
-                 Confirmed = registrations.Count(r => r.Status == RegistrationStatusEnum.Approved),
+                Confirmed = registrations.Count(r => r.Status == RegistrationStatusEnum.Approved),
                 Cancelled = registrations.Count(r => r.Status == RegistrationStatusEnum.Canceled),
                 Waitlisted = registrations.Count(r => r.Status == RegistrationStatusEnum.Waitlisted)
             };
 
             result.IsSuccess = true;
-            result.Data = statistics;  
+            result.Data = statistics;
             return result;
         }
 
@@ -79,7 +69,5 @@ namespace Application.Services
             result.Data = dtoList;
             return result;
         }
-
     }
-
 }

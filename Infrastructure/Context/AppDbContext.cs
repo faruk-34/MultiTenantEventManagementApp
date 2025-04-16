@@ -6,17 +6,16 @@ namespace Infrastructure.Context
 {
     public class AppDbContext : DbContext
     {
-        private readonly IConfiguration _configuration;
+
         public IWorkContext _workContext { get; set; }
 
         public AppDbContext(
             DbContextOptions<AppDbContext> options,
-            IWorkContext workContext,
-            IConfiguration configuration)
+            IWorkContext workContext
+             )
             : base(options)
         {
             _workContext = workContext;
-            _configuration = configuration;
         }
 
         // DbSet tanımlamaları

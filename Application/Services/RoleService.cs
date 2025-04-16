@@ -5,8 +5,6 @@ using Application.Models.SubResponseModel;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Repositories;
-using System.Threading;
 
 namespace Application.Services
 {
@@ -40,15 +38,11 @@ namespace Application.Services
 
             }
             return result;
-
         }
-
         public async Task<Response<RoleVM>> GetById(int id, CancellationToken cancellationToken)
         {
             var result = new Response<RoleVM>();
 
-            try
-            {
                 var role = await _roleRepository.GetById(id, cancellationToken);
                 if (role == null)
                 {
@@ -60,56 +54,35 @@ namespace Application.Services
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<RoleVM>(role); ;
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-                return result;
-            }
+                return result;        
         }
 
         public async Task<Response<List<RoleVM>>> GetAll(CancellationToken cancellationToken)
         {
             var result = new Response<List<RoleVM>>();
-
-
-
-            try
-            {
+ 
                 var events = await _roleRepository.GetAll(cancellationToken);
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<List<RoleVM>>(events);
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = ex.Message;
-            }
-
             return result;
-
         }
 
         public async Task<Response<RoleVM>> Update(RequestRole request, CancellationToken cancellationToken)
         {
             var result = new Response<RoleVM>();
 
-            try
-            {
                 if (request == null)
                 {
                     result.IsSuccess = false;
-                    result.ErrorMessage = "Role cannot be null.";
-                    return result;
+                    result.ErrorMessage = "Role bulunamadı!";
+                return result;
                 }
 
                 var existingRole = await _roleRepository.GetById(request.Id, cancellationToken);
                 if (existingRole == null)
                 {
                     result.IsSuccess = false;
-                    result.ErrorMessage = "Role not found.";
+                    result.ErrorMessage = "Role bulunamadı.";
                     return result;
                 }
 
@@ -117,28 +90,20 @@ namespace Application.Services
                 await _roleRepository.Update(existingRole, cancellationToken);
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<RoleVM>(existingRole);
-                result.ErrorMessage = "Role updated successfully.";
+                result.ErrorMessage = "Role güncellendi.";
                 return result;
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = $"An error occurred while updating the role: {ex.Message}";
-                return result;
-            }
+ 
         }
 
         public async Task<Response<bool>> Delete(int id, CancellationToken cancellationToken)
         {
             var result = new Response<bool>();
-
-            try
-            {
+ 
                 var role = await _roleRepository.GetById(id, cancellationToken);
                 if (role == null)
                 {
                     result.IsSuccess = false;
-                    result.ErrorMessage = "Role not found.";
+                    result.ErrorMessage = "Role bulunamadı.";
                     return result;
                 }
 
@@ -147,13 +112,7 @@ namespace Application.Services
                 result.IsSuccess = true;
                 result.Data = true;
                 result.MessageTitle = "Rol başarıyla silindi.";
-            }
-            catch (Exception ex)
-            {
-                result.IsSuccess = false;
-                result.ErrorMessage = $"An error occurred while deleting the role: {ex.Message}";
-
-            }
+ 
             return result;
         }
     }

@@ -2,9 +2,7 @@
 using Application.Models.BaseResponse;
 using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
-using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -21,7 +19,6 @@ namespace WebAPI.Controllers
         {
             _eventService = eventService;
         }
-
 
         [HttpGet()]
         public async Task<Response<List<EventVM>>> GetAllFilteredEvents([FromQuery] EventFilterVM filter, CancellationToken cancellationToken)
