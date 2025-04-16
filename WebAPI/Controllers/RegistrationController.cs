@@ -3,10 +3,12 @@ using Application.Models.BaseResponse;
 using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
 using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RegistrationController : ControllerBase

@@ -6,8 +6,10 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
+using Infrastructure;
 using Infrastructure.Context;
 using Infrastructure.Redis;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -17,13 +19,14 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly IRedisService _redis;
         private readonly AppDbContext _context;
-
-        public EventService(IEventRepository eventRepository, IMapper mapper, IRedisService redis,AppDbContext context)
+        private readonly IWorkContext _workContext;
+        public EventService(IEventRepository eventRepository, IMapper mapper, IRedisService redis,AppDbContext context,IWorkContext workContext)
         {
             _eventRepository = eventRepository;
             _mapper = mapper;
             _redis = redis;
             _context = context;
+            _workContext = workContext;
         }
 
         #region Etkinlik Detay Catchcleme (Redis)
@@ -82,9 +85,11 @@ namespace Application.Services
             return result;
         }
  
-        public IQueryable<Event> GetAllFilter(EventFilterVM filter, CancellationToken cancellationToken)
+        public async Task<Response<List<EventVM>>> GetAllFilter(EventFilterVM filter, CancellationToken cancellationToken)
         {
-            var query = _context.Events.AsQueryable();
+            var result = new Response<List<EventVM>>();
+
+            var query = _context.Events.AsQueryable().Where(x=>x.TenantId ==_workContext.TenantId);
 
             if (!string.IsNullOrEmpty(filter.Title))
             {
@@ -106,7 +111,11 @@ namespace Application.Services
                 query = query.Where(e => e.Status == (EventStatusEnum)filter.Status.Value);
             }
 
-            return query;  
+
+            var events = await query.ToListAsync(cancellationToken);
+            result.Data = _mapper.Map<List<EventVM>>(events);
+
+            return result;
         }
 
         public async Task<Response<EventVM>> Get(int id, CancellationToken cancellationToken)
@@ -125,7 +134,7 @@ namespace Application.Services
 
                 result.IsSuccess = true;
                 result.Data = _mapper.Map<EventVM>(eventExist);
-                result.MessageTitle = "Etkinlik başarıyla getirildi.";
+            
             }
             catch (Exception ex)
             {
@@ -143,6 +152,7 @@ namespace Application.Services
             try
             {
                 var eventEntity = _mapper.Map<Event>(request);
+                eventEntity.TenantId=_workContext.TenantId;
                 await _eventRepository.Insert(eventEntity, cancellationToken);
 
                 result.IsSuccess = true;

@@ -7,8 +7,11 @@ using Infrastructure.Authentication;
 using Infrastructure.Context;
 using Infrastructure.Redis;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using WebAPI;
 using WebAPI.Middleware;
 
@@ -22,9 +25,30 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // "Bearer"
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = "Faruk Kalkan", // token içindeki "iss"
+        ValidAudience = "EvenManagementApp", // token içindeki "aud"
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySecretKey123 MySecretKey123 MySecretKey123 MySecretKey123 MySecretKey123 MySecretKey123"))  
+    };
+});
+
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
- 
+
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -80,7 +104,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
-builder.Services.AddScoped<WorkContext>();
+builder.Services.AddScoped<IWorkContext, WorkContext>();
 builder.Services.AddScoped<IRedisService, RedisService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 
@@ -95,12 +119,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseMiddleware<JwtUserResolverMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 
- 
-app.UseAuthentication();
-app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

@@ -24,11 +24,11 @@ namespace WebAPI.Controllers
 
 
         [HttpGet()]
-        public IQueryable<Event> GetAllFilteredEvents([FromQuery] EventFilterVM filter, CancellationToken cancellationToken)
+        public async Task<Response<List<EventVM>>> GetAllFilteredEvents([FromQuery] EventFilterVM filter, CancellationToken cancellationToken)
         {
-            var query = _eventService.GetAllFilter(filter, cancellationToken);
+            var response = await _eventService.GetAllFilter(filter, cancellationToken);
 
-            return (IQueryable<Event>)query; 
+            return response;
         }
 
         [HttpGet("{id}")]

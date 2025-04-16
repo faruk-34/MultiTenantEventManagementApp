@@ -1,10 +1,12 @@
 ﻿using Application.Interfaces;
 using Application.Models.BaseResponse;
 using Application.Models.SubResponseModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportsController : ControllerBase

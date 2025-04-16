@@ -11,7 +11,7 @@ namespace Domain.Interfaces
     {
         Task  InsertUserRole(UserRole userRole,CancellationToken cancellationToken);
         Task<List<UserRole>> GetUserRolesByUserId(int userId, CancellationToken cancellationToken);
-        Task<UserRole> GetUserRole(int userId, int roleId,CancellationToken cancellationToken);
+        Task<UserRole> GetUserRole(int Id, CancellationToken cancellationToken);
         Task  UpdateUserRole(UserRole userRole, CancellationToken cancellationToken);
         Task  DeleteUserRole(UserRole userRole, CancellationToken cancellationToken);
     }

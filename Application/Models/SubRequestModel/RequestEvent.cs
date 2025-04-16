@@ -12,6 +12,6 @@ namespace Application.Models.SubRequestModel
         public string Location { get; set; } = null!;
         public int Capacity { get; set; }
         public EventStatusEnum Status { get; set; }  
-        public int TenantId { get; set; }
+ 
       }
 }

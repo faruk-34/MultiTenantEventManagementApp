@@ -35,10 +35,10 @@ namespace Infrastructure.Repositories
            
         }
 
-        public async Task<UserRole> GetUserRole(int userId, int roleId,CancellationToken cancellation)
+        public async Task<UserRole> GetUserRole(int Id,CancellationToken cancellation)
         {
             return await _context.UserRoles
-                .FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RoleId == roleId,cancellation);
+                .FirstOrDefaultAsync(ur => ur.Id == Id, cancellation);
 
  
         }

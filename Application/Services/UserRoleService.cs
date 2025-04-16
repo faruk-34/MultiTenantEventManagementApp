@@ -61,7 +61,7 @@ namespace Application.Services
 
             try
             {
-                var userRoleExist = await _userRoleRepository.GetUserRole(request.UserId,request.RoleId, cancellationToken);
+                var userRoleExist = await _userRoleRepository.GetUserRole(request.Id, cancellationToken);
                 if (userRoleExist == null)
                 {
                     result.IsSuccess = false;
@@ -91,7 +91,7 @@ namespace Application.Services
 
             try
             {
-                var userRoleExist = await _userRoleRepository.GetUserRole(request.UserId, request.RoleId, cancellationToken);
+                var userRoleExist = await _userRoleRepository.GetUserRole(request.Id, cancellationToken);
                 if (userRoleExist == null)
                 {
                     result.IsSuccess = false;

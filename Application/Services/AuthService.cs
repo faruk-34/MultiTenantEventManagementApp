@@ -6,8 +6,8 @@ using Application.Validator;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using FluentValidation;
 using FluentValidation.Results;
+using Infrastructure;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,15 +19,18 @@ namespace Application.Services
         private readonly IUsersRepository _usersRepository;
         private readonly IMapper _mapper;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IWorkContext _workContext;
+
 
         public AuthService(IUsersRepository usersRepository, IMapper mapper,
              AppDbContext context,
-             IJwtTokenGenerator jwtTokenGenerator)
+             IJwtTokenGenerator jwtTokenGenerator, IWorkContext workContext)
         {
             _usersRepository = usersRepository;
             _mapper = mapper;
             _jwtTokenGenerator = jwtTokenGenerator;
             _context = context;
+            _workContext = workContext;
         }
 
         public async Task<Response<UsersVM>> Register(RequestUsers request, CancellationToken cancellationToken)
@@ -67,6 +70,7 @@ namespace Application.Services
                 request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
                 Users user = _mapper.Map<Users>(request);
+                user.TenantId = _workContext.TenantId;
 
                 if (string.IsNullOrEmpty(user.PasswordHash))
                     user.PasswordHash = request.Password;
@@ -89,58 +93,49 @@ namespace Application.Services
         {
             var result = new Response<LoginVM>();
 
-            //try
-            //{
+            LoginRequestValidator validator = new LoginRequestValidator(); // Fluent Validation
+            ValidationResult validationResult = validator.Validate(request);
 
-                LoginRequestValidator validator = new LoginRequestValidator(); // Fluent Validation
-                ValidationResult validationResult = validator.Validate(request);
-
-                if (!validationResult.IsValid)
-                {
-                    result.IsSuccess = false;
-                    result.ErrorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
-                    return result;
-                }
-
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-                if (user == null)
-                {
-                    result.IsSuccess = false;
-                    result.ErrorMessage = "Kullanıcı bulunamadı!";
-                    return result;
-                }
-                
-
-                // Şifre doğrulama
-                bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-                if (!isPasswordValid)
-                {
-                    result.IsSuccess = false;
-                    result.ErrorMessage = "Şifre hatalı!";
-                    return result;
-                }
-
-                // Token üretimi
-                var token = _jwtTokenGenerator.GenerateToken(user);
-
-                var loginVm = new LoginVM
-                {
-                    Token = token,
-                };
-
-                result.Data = loginVm;
-                result.IsSuccess = true;
-                result.MessageTitle = "Kullanıcı girişi başarılı!" ;
-
+            if (!validationResult.IsValid)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage = string.Join(" | ", validationResult.Errors.Select(e => e.ErrorMessage));
                 return result;
             }
-            //catch (Exception ex)
-            //{
-            //    result.IsSuccess = false;
-            //    result.ErrorMessage = ex.Message;
-            //    return result;
-            //}
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage = "Kullanıcı bulunamadı!";
+                return result;
+            }
+
+
+            // Şifre doğrulama
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+            if (!isPasswordValid)
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage = "Şifre hatalı!";
+                return result;
+            }
+
+            // Token üretimi
+            var token = _jwtTokenGenerator.GenerateToken(user);
+
+            var loginVm = new LoginVM
+            {
+                Token = token,
+            };
+
+            result.Data = loginVm;
+            result.IsSuccess = true;
+            result.MessageTitle = "Kullanıcı girişi başarılı!";
+
+            return result;
         }
 
     }
- 
+}
+

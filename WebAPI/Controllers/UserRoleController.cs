@@ -1,20 +1,21 @@
-﻿using Application.Models.BaseResponse;
+﻿using Application.Interfaces;
+using Application.Models.BaseResponse;
 using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
 using Application.Services;
-using Azure.Core;
-using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserRoleController : ControllerBase
     {
-        private readonly UserRoleService _userRoleService;
+        private readonly IUserRoleService _userRoleService;
 
-        public UserRoleController(UserRoleService userRoleService)
+        public UserRoleController(IUserRoleService userRoleService)
         {
             _userRoleService = userRoleService;
         }

@@ -1,11 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Models.SubRequestModel
+﻿namespace Application.Models.SubRequestModel
 {
     public class RequestUsers
     {
@@ -15,6 +8,6 @@ namespace Application.Models.SubRequestModel
         public string Username { get; set; }
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public int TenantId { get; set; }
+      //  public int TenantId { get; set; }
     }
 }

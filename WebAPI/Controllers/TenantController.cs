@@ -2,11 +2,13 @@
 using Application.Models.BaseResponse;
 using Application.Models.SubRequestModel;
 using Application.Models.SubResponseModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TenantController : ControllerBase
